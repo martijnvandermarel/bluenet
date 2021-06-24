@@ -126,8 +126,8 @@ set(NRFJPROG_DEB_FILE nRF-Command-Line-Tools_10_12_1_Linux-amd64.deb)
 set(NRFJPROG_MD5 a5d88595f13296614f07a8e8da6716b6)
 
 # The cross-compiler
-set(GCC_ARM_NONE_EABI_DOWNLOAD_URL https://developer.arm.com/-/media/Files/downloads/gnu-rm/8-2019q3/RC1.1/gcc-arm-none-eabi-8-2019-q3-update-linux.tar.bz2?revision=c34d758a-be0c-476e-a2de-af8c6e16a8a2?product=GNU%20Arm%20Embedded%20Toolchain,64-bit,,Linux,8-2019-q3-update)
-set(GCC_ARM_NONE_EABI_MD5 6341f11972dac8de185646d0fbd73bfc)
+set(GCC_ARM_NONE_EABI_DOWNLOAD_URL https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2019q4/gcc-arm-none-eabi-9-2019-q4-major-x86_64-linux.tar.bz2?revision=108bd959-44bd-4619-9c19-26187abf5225&la=en&hash=E788CE92E5DFD64B2A8C246BBA91A249CB8E2D2D)
+set(GCC_ARM_NONE_EABI_MD5 fe0029de4f4ec43cf7008944e34ff8cc)
 
 # The JLink tool
 set(JLINK_DOWNLOAD_URL https://www.segger.com/downloads/jlink)
