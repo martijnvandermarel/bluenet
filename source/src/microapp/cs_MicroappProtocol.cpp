@@ -813,6 +813,15 @@ cs_ret_code_t MicroappProtocol::handleMicroappBleCommand(microapp_ble_cmd_t* ble
 			_microappIsScanning = false;
 			break;
 		}
+		case CS_MICROAPP_COMMAND_BLE_CONNECT: {
+			TYPIFY(CMD_BLE_CENTRAL_CONNECT) bleConnectCommand;
+			std::reverse_copy(ble_cmd->address, ble_cmd->address + MAC_ADDRESS_LENGTH, bleConnectCommand.address.address);
+			// bleConnectCommand.address.addressType = CS_ADDRESS_TYPE_RANDOM_STATIC;
+			event_t event(CS_TYPE::CMD_BLE_CENTRAL_CONNECT, &bleConnectCommand, sizeof(bleConnectCommand));
+			event.dispatch();
+			LOGi("BLE command result: %u",event.result.returnCode);
+			return event.result.returnCode;
+		}
 		default: {
 			LOGi("Unknown microapp BLE command opcode: %u", ble_cmd->opcode);
 			return ERR_UNKNOWN_OP_CODE;
