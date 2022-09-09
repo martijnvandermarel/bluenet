@@ -12,12 +12,10 @@
 #include <microapp/cs_MicroappInterruptHandler.h>
 #include <microapp/cs_MicroappSdkUtil.h>
 
-#define LogMicroappInterrupDebug LOGvv
-
 /*
  * Enable throttling of BLE scanned devices by rssi.
  */
-#define DEVELOPER_OPTION_THROTTLE_BY_RSSI 0
+#define DEVELOPER_OPTION_THROTTLE_BY_RSSI 1
 
 MicroappInterruptHandler::MicroappInterruptHandler() : EventListener() {
 	EventDispatcher::getInstance().addListener(this);
@@ -91,11 +89,11 @@ void MicroappInterruptHandler::handleEvent(event_t& event) {
 
 uint8_t* MicroappInterruptHandler::getOutputBuffer(MicroappSdkMessageType type, uint8_t id) {
 	if (!MicroappController::getInstance().allowSoftInterrupts()) {
-		LogMicroappInterrupDebug("New interrupts blocked, ignore event");
+		LogMicroappInterruptDebug("New interrupts blocked, ignore event");
 		return nullptr;
 	}
 	if (!MicroappController::getInstance().isSoftInterruptRegistered(type, id)) {
-		LogMicroappInterrupDebug("No interrupt registered");
+		LogMicroappInterruptDebug("No interrupt registered");
 		return nullptr;
 	}
 	return MicroappController::getInstance().getOutputMicroappBuffer();
@@ -106,10 +104,10 @@ uint8_t* MicroappInterruptHandler::getOutputBuffer(MicroappSdkMessageType type, 
  * and if so, prepare the outgoing buffer and call generateSoftInterrupt()
  */
 void MicroappInterruptHandler::onGpioUpdate(cs_gpio_update_t& event) {
-	LogMicroappInterrupDebug("onGpioUpdate");
+	LogMicroappInterruptDebug("onGpioUpdate");
 	uint8_t interruptPin  = MicroappSdkUtil::digitalPinToInterrupt(event.pinIndex);
 
-	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_SCAN);
+	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_PIN, interruptPin);
 	if (outputBuffer == nullptr) {
 		return;
 	}
@@ -118,7 +116,7 @@ void MicroappInterruptHandler::onGpioUpdate(cs_gpio_update_t& event) {
 	pin->header.messageType = CS_MICROAPP_SDK_TYPE_PIN;
 	pin->pin                = interruptPin;
 
-	LogMicroappInterrupDebug("Incoming GPIO interrupt for microapp on virtual pin %i", interruptPin);
+	LogMicroappInterruptDebug("Incoming GPIO interrupt for microapp on virtual pin %i", interruptPin);
 	MicroappController::getInstance().generateSoftInterrupt();
 }
 
@@ -137,7 +135,7 @@ void MicroappInterruptHandler::onDeviceScanned(scanned_device_t& dev) {
 		return;
 	}
 #endif
-	LogMicroappInterrupDebug("onDeviceScanned");
+	LogMicroappInterruptDebug("onDeviceScanned");
 
 	// Write bluetooth device to buffer
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_SCAN);
@@ -160,7 +158,7 @@ void MicroappInterruptHandler::onDeviceScanned(scanned_device_t& dev) {
 	ble->scan.eventScan.size = dev.dataSize;
 	memcpy(ble->scan.eventScan.data, dev.data, dev.dataSize);
 
-	LogMicroappInterrupDebug("Incoming BLE scanned device for microapp");
+	LogMicroappInterruptDebug("Incoming BLE scanned device for microapp");
 	MicroappController::getInstance().generateSoftInterrupt();
 }
 
@@ -173,11 +171,11 @@ void MicroappInterruptHandler::onReceivedMeshMessage(MeshMsgEvent& event) {
 		// Mesh message received, but not for the microapp.
 		return;
 	}
-	LogMicroappInterrupDebug("onReceivedMeshMessage");
+	LogMicroappInterruptDebug("onReceivedMeshMessage");
 
 	if (event.isReply) {
 		// We received the empty reply.
-		LogMicroappInterrupDebug("Reply received");
+		LogMicroappInterruptDebug("Reply received");
 		return;
 	}
 	if (event.reply != nullptr) {
@@ -198,12 +196,12 @@ void MicroappInterruptHandler::onReceivedMeshMessage(MeshMsgEvent& event) {
 	meshMsg->size                = event.msg.len;
 	memcpy(meshMsg->data, event.msg.data, event.msg.len);
 
-	LogMicroappInterrupDebug("Incoming mesh message for microapp");
+	LogMicroappInterruptDebug("Incoming mesh message for microapp");
 	MicroappController::getInstance().generateSoftInterrupt();
 }
 
 void MicroappInterruptHandler::onBleCentralConnectResult(cs_ret_code_t& retCode) {
-	LogMicroappInterrupDebug("onBleCentralConnectResult");
+	LogMicroappInterruptDebug("onBleCentralConnectResult");
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_CENTRAL);
 	if (outputBuffer == nullptr) {
 		return;
@@ -220,7 +218,7 @@ void MicroappInterruptHandler::onBleCentralConnectResult(cs_ret_code_t& retCode)
 }
 
 void MicroappInterruptHandler::onBleCentralDisconnected() {
-	LogMicroappInterrupDebug("onBleCentralDisconnected");
+	LogMicroappInterruptDebug("onBleCentralDisconnected");
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_CENTRAL);
 	if (outputBuffer == nullptr) {
 		return;
@@ -236,7 +234,7 @@ void MicroappInterruptHandler::onBleCentralDisconnected() {
 }
 
 void MicroappInterruptHandler::onBleCentralDiscovery(ble_central_discovery_t& event) {
-	LogMicroappInterrupDebug("onBleCentralDiscovery");
+	LogMicroappInterruptDebug("onBleCentralDiscovery");
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_CENTRAL);
 	if (outputBuffer == nullptr) {
 		return;
@@ -255,7 +253,7 @@ void MicroappInterruptHandler::onBleCentralDiscovery(ble_central_discovery_t& ev
 }
 
 void MicroappInterruptHandler::onBleCentralDiscoveryResult(cs_ret_code_t& retCode) {
-	LogMicroappInterrupDebug("onBleCentralDiscoveryResult");
+	LogMicroappInterruptDebug("onBleCentralDiscoveryResult");
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_CENTRAL);
 	if (outputBuffer == nullptr) {
 		return;
@@ -272,7 +270,7 @@ void MicroappInterruptHandler::onBleCentralDiscoveryResult(cs_ret_code_t& retCod
 }
 
 void MicroappInterruptHandler::onBleCentralWriteResult(cs_ret_code_t& retCode) {
-	LogMicroappInterrupDebug("onBleCentralWriteResult");
+	LogMicroappInterruptDebug("onBleCentralWriteResult");
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_CENTRAL);
 	if (outputBuffer == nullptr) {
 		return;
@@ -290,7 +288,7 @@ void MicroappInterruptHandler::onBleCentralWriteResult(cs_ret_code_t& retCode) {
 }
 
 void MicroappInterruptHandler::onBleCentralReadResult(ble_central_read_result_t& event) {
-	LogMicroappInterrupDebug("onBleCentralReadResult");
+	LogMicroappInterruptDebug("onBleCentralReadResult");
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_CENTRAL);
 	if (outputBuffer == nullptr) {
 		return;
@@ -312,7 +310,7 @@ void MicroappInterruptHandler::onBleCentralReadResult(ble_central_read_result_t&
 }
 
 void MicroappInterruptHandler::onBlePeripheralConnect(ble_connected_t& event) {
-	LogMicroappInterrupDebug("onBlePeripheralConnect");
+	LogMicroappInterruptDebug("onBlePeripheralConnect");
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_PERIPHERAL);
 	if (outputBuffer == nullptr) {
 		return;
@@ -332,7 +330,7 @@ void MicroappInterruptHandler::onBlePeripheralConnect(ble_connected_t& event) {
 }
 
 void MicroappInterruptHandler::onBlePeripheralDisconnect(uint16_t connectionHandle) {
-	LogMicroappInterrupDebug("onBlePeripheralConnect");
+	LogMicroappInterruptDebug("onBlePeripheralConnect");
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_PERIPHERAL);
 	if (outputBuffer == nullptr) {
 		return;
@@ -349,7 +347,7 @@ void MicroappInterruptHandler::onBlePeripheralDisconnect(uint16_t connectionHand
 
 void MicroappInterruptHandler::onBlePeripheralWrite(
 		uint16_t connectionHandle, uint16_t characteristicHandle, cs_data_t value) {
-	LogMicroappInterrupDebug("onBlePeripheralWrite");
+	LogMicroappInterruptDebug("onBlePeripheralWrite");
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_PERIPHERAL);
 	if (outputBuffer == nullptr) {
 		return;
@@ -368,7 +366,7 @@ void MicroappInterruptHandler::onBlePeripheralWrite(
 
 void MicroappInterruptHandler::onBlePeripheralSubscription(
 		uint16_t connectionHandle, uint16_t characteristicHandle, bool subscribed) {
-	LogMicroappInterrupDebug("onBlePeripheralSubscription subscribed=%u", subscribed);
+	LogMicroappInterruptDebug("onBlePeripheralSubscription subscribed=%u", subscribed);
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_PERIPHERAL);
 	if (outputBuffer == nullptr) {
 		return;
@@ -390,7 +388,7 @@ void MicroappInterruptHandler::onBlePeripheralSubscription(
 }
 
 void MicroappInterruptHandler::onBlePeripheralNotififyDone(uint16_t connectionHandle, uint16_t characteristicHandle) {
-	LogMicroappInterrupDebug("onBlePeripheralNotififyDone");
+	LogMicroappInterruptDebug("onBlePeripheralNotififyDone");
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_PERIPHERAL);
 	if (outputBuffer == nullptr) {
 		return;

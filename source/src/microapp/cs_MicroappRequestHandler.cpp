@@ -439,18 +439,17 @@ cs_ret_code_t MicroappRequestHandler::handleRequestBleScan(microapp_sdk_ble_t* b
 		case CS_MICROAPP_SDK_BLE_SCAN_REGISTER_INTERRUPT: {
 			MicroappController& controller = MicroappController::getInstance();
 			cs_ret_code_t result = controller.registerSoftInterrupt(CS_MICROAPP_SDK_TYPE_BLE, CS_MICROAPP_SDK_BLE_SCAN);
-
 			ble->header.ack      = MicroappSdkUtil::bluenetResultToMicroapp(result);
 			return result;
 		}
 		case CS_MICROAPP_SDK_BLE_SCAN_START: {
-			LOGv("Start scanning");
+			LogMicroappRequestHandlerDebug("Start scanning");
 			MicroappController::getInstance().microappData.isScanning = true;
 			ble->header.ack                                           = CS_MICROAPP_SDK_ACK_SUCCESS;
 			return ERR_SUCCESS;
 		}
 		case CS_MICROAPP_SDK_BLE_SCAN_STOP: {
-			LOGv("Stop scanning");
+			LogMicroappRequestHandlerDebug("Stop scanning");
 			MicroappController::getInstance().microappData.isScanning = false;
 			ble->header.ack                                           = CS_MICROAPP_SDK_ACK_SUCCESS;
 			return ERR_SUCCESS;

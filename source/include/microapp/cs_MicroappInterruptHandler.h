@@ -12,7 +12,7 @@
 #include <mesh/cs_MeshMsgEvent.h>
 #include <structs/cs_PacketsInternal.h>
 
-#define LogMicroappRequestHandlerDebug LOGvv
+#define LogMicroappInterruptDebug LOGvv
 
 /**
  * The class MicroappRequestHandler has functionality to store a second app (and perhaps in the future even more apps)

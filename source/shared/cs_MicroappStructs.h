@@ -110,6 +110,8 @@ enum MicroappSdkAck {
 	CS_MICROAPP_SDK_ACK_ERR_EMPTY           = 0x0C,
 	//! Request or its parameters are too large
 	CS_MICROAPP_SDK_ACK_ERR_TOO_LARGE       = 0x0D,
+	//! Request cannot be fulfilled again
+	CS_MICROAPP_SDK_ACK_ERR_ALREADY_EXISTS  = 0x0E,
 };
 
 typedef MicroappSdkAck microapp_sdk_result_t;
