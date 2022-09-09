@@ -577,7 +577,7 @@ struct __attribute__((packed)) microapp_sdk_ble_address_t {
 	//! Type of address. See MicroappSdkBleAddressType.
 	uint8_t type;
 
-	//! Big-endian MAC address.
+	//! Little-endian MAC address.
 	uint8_t address[MAC_ADDRESS_LENGTH];
 };
 

@@ -153,7 +153,7 @@ void MicroappInterruptHandler::onDeviceScanned(scanned_device_t& dev) {
 	ble->type                        = CS_MICROAPP_SDK_BLE_SCAN;
 	ble->scan.type                   = CS_MICROAPP_SDK_BLE_SCAN_EVENT_SCAN;
 	ble->scan.eventScan.address.type = dev.addressType;
-	std::reverse_copy(dev.address, dev.address + MAC_ADDRESS_LENGTH, ble->scan.eventScan.address.address);
+	std::copy(dev.address, dev.address + MAC_ADDRESS_LENGTH, ble->scan.eventScan.address.address);
 	ble->scan.eventScan.rssi = dev.rssi;
 	ble->scan.eventScan.size = dev.dataSize;
 	memcpy(ble->scan.eventScan.data, dev.data, dev.dataSize);
