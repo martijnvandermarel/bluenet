@@ -109,6 +109,7 @@ void MicroappInterruptHandler::onGpioUpdate(cs_gpio_update_t& event) {
 
 	uint8_t* outputBuffer = getOutputBuffer(CS_MICROAPP_SDK_TYPE_PIN, interruptPin);
 	if (outputBuffer == nullptr) {
+		LogMicroappInterrupDebug("No output buffer");
 		return;
 	}
 
